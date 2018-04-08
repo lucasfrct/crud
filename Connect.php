@@ -9,7 +9,7 @@ class Connect
 	private static $message = Array ( );
 	private static $exception = Array ( );
 	private $host = array( "host"=> "127.0.0.1", "port"=> "3306", "user"=> "root", "password"=> "" );
-	private $database = "crud";
+	private $database = "mysql";
 	private $mysqli = null;
 
 	# Testa se o servidor esta online

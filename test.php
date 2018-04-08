@@ -7,14 +7,44 @@ Tester::on ( "Connect::on ( );", function ( $assert ) {
 	$connect = ( Connect::on ( ) ) ? true : false;
 	Connect::off ( );
 	$assert::ok (  $connect , "Instancia a Classe connect: ".Connect::report ( ) );
-}, 10 );
+}, 100 );
 
 Tester::on ( "Connect::on ( )->query ( );", function ( $assert ) {
-	$assert::ok ( Connect::on ( )->query ( "INSERT INTO users ( name, email, emailSecurity, password ) VALUES ( 'Name', 'Email 1', 'email Sec', 'Pass' )" ), "Registrar insert em banco de dados: ".Connect::report ( ) );
+	$assert::ok ( Connect::on ( )->query ( "DROP DATABASE IF EXISTS tester;" ), "Delete Database tester se existir: ".Connect::report ( ) );
 	Connect::off ( );
-}, 10 );
+}, 1 );
 
-Tester::on ( "parseBool ( data ) ", function ( $assert ) {
+Tester::on ( "Connect::on ( )->query ( );", function ( $assert ) {
+	$assert::ok ( Connect::on ( )->query ( "CREATE DATABASE IF NOT EXISTS tester;" ), "Crie Database tester se não existir: ".Connect::report ( ) );
+	Connect::off ( );
+}, 1 );
+
+Tester::on ( "Connect::on ( )->query ( );", function ( $assert ) {
+	$assert::ok ( Connect::on ( )->query ( "DROP TABLE IF EXISTS tester.tt;" ), "Delete tabela tt se existir: ".Connect::report ( ) );
+	Connect::off ( );
+}, 1 );
+
+Tester::on ( "Connect::on ( )->query ( );", function ( $assert ) {
+	$assert::ok ( Connect::on ( )->query ( 
+		"CREATE TABLE IF NOT EXISTS tester.tt (
+		id INT ( 11 ) PRIMARY KEY AUTO_INCREMENT,
+		enable BOOLEAN DEFAULT TRUE,
+		name VARCHAR ( 255 ) NOT NULL
+		);" 
+	), "Crie tabela tt se não existir: ".Connect::report ( ) );
+	Connect::off ( );
+}, 1 );
+
+Tester::on ( "Connect::on ( )->query ( );", function ( $assert ) {
+	$assert::ok ( Connect::on ( )->query ( 
+		"INSERT INTO crud.users ( name, email, emailSecurity, password ) 
+		VALUES ( "Name", "E-mail", "E-mail Security", "Password" );"
+	), "Inset name na tabela tt se existir: ".Connect::report ( ) );
+	Connect::off ( );
+}, 1 );
+
+
+/*Tester::on ( "parseBool ( data ) ", function ( $assert ) {
 	$assert::ok ( Modeldata::on ( )->parseBool ( "true" ), "Transforma string true em bool TRUE" );
 } );
 
