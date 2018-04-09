@@ -6,8 +6,8 @@ class Connect
 
 	# Instância única 
 	private static $instance = null;
-	private static $message = Array ( );
-	private static $exception = Array ( );
+	public static $message = Array ( );
+	public static $exception = Array ( );
 	private $host = array( "host"=> "127.0.0.1", "port"=> "3306", "user"=> "root", "password"=> "" );
 	private $database = "mysql";
 	private $mysqli = null;
@@ -120,6 +120,5 @@ class Connect
 	private function __wakeup ( ) { }
 };
 
-#echo Connect::on ( )->query ( "INSERT INTO users ( name, email, emailSecurity, password ) VALUES ( 'Name', 'Email 1', 'email Sec', 'Pass' )" );
 #echo Connect::report ( );
 #echo Connect::off ( );

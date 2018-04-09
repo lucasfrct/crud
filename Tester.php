@@ -9,6 +9,43 @@ ini_set ( 'display_startup_errors', TRUE );
 ini_set ( "display_errors", TRUE );
 ini_set ( "default_charset", TRUE );
 
+echo '<style>
+body {
+    font-family: verdana, sans-serif;
+}
+.container { 
+    border: solid 1px #9E9E9E;
+    display block; margin: 1px 0; 
+    padding: 7px 14px; 
+    min-height: 60px; 
+    background-color: #EEEEEE;
+    font-size: 14px;
+}
+
+.container h5 {
+    margin: 0px 0 7px 0;
+    padding: 7px 0;
+    font-size  1em;
+}
+.container small, .container section {
+    font-size: 0.9em;
+    display: block;
+    background-color: #DDD;
+    padding: 7px;
+
+}
+.container small sub {
+    font-size: 0.8em;
+}
+.container small em {
+    float: right;
+    right: 0;
+}
+.container section {
+    background-color: #BBB;
+}
+</style>';
+
 class Tester 
 {
     private static $offset = 0.000007;
@@ -46,14 +83,17 @@ class Tester
     }
 
     private static function inner ( ) 
-    {   
+    {    
         $set = ( self::$status !== false ) ? self::$success : self::$error;
-
-        $title = '<span><b>'.self::$name.' </b><small>'.round ( self::$timeOfEachTest, 6 ).'ms <sub>( x'.self::$repeat.' )</sub></small> </span>';
-        $time = '<span style="float: right;text-align: right; rigth: 0;"><b>Tempo total: '.round ( ( self::$timeOfTest / 1000 ), 2 ).'s <small> ( '. round ( self::$timeOfTest, 4 ).'ms )</b></small></span>';
-        $msg = '<div style="font-size: 10pt;">'.self::$msg.'</div>';
-
-        echo '<div style="font-family: verdana, sans-serif;font-size: 10pt; display: block; border: solid 1px '.$set [ 0 ].'; background-color: '.$set [ 1 ].'; padding: 5px; margin: 2px 0;"><div style="display: block; margin-bottom: 4px; border-bottom: solid 1px '.$set [ 1 ].'; padding-bottom: 3px; width:100%;">'.$title.$time.'</div>'.$msg.'</div>';
+        echo '<div class="container" style="border-color: '.$set [ 0 ].'">
+            <h5>'.self::$name.'</h5>
+            <small>
+                <span>'.round ( self::$timeOfEachTest, 6 ).'ms</span> 
+                <sub>(x'.self::$repeat.')</sub>
+                <em>Tempo total: '.round ( ( self::$timeOfTest / 1000 ), 2 ).'s</em>
+            </small>
+            <section style="background-color:  '.$set [ 1 ].'">'.self::$msg.'</section>
+        </div>';
     }
 
     private static function sum ( array $array = null ): float

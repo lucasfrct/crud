@@ -1,5 +1,5 @@
 <?php
 spl_autoload_register( function ( $class ) {
-	#echo "<br><b>".str_replace ( "\\", "/", $class.'.php' )."</b>";
+	//echo "<b>".str_replace ( "\\", "/", $class.'.php' )."</b><br>";
     require_once ( str_replace ( "\\", "/", $class.'.php' ) );
 } );

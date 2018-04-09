@@ -2,10 +2,10 @@
 #Service.php
 include ( "Autoload.php" );
 
+use Crud as ServiceCrud;
+
 class Service
 {
-	private static $connect = null;
-	private static $modeldata = null;
 	private static $crud = null;
 
 	private static function post ( ) {
@@ -25,4 +25,4 @@ class Service
 	}
 }
 
-Service::on ( Crud::on ( Connect::on ( ), Modeldata::on ( ) ) );
+Service::on ( ServiceCrud::on ( ) );

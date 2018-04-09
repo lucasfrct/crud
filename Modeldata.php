@@ -39,9 +39,9 @@ class Modeldata
     {
         $itens = array ( );
 
-        foreach ( json_decode ( $data, true ) as $field=> $value ) {
+        foreach ( json_decode ( $data, true ) as $field => $value ) {
             $value = self::$instance->parseBool ( $value );
-            array_push ( $itens, "{$field}='{$value}'" );
+            array_push ( $itens, "{$field} = '{$value}'" );
         };
 
         return implode ( ",", $itens );
@@ -49,11 +49,11 @@ class Modeldata
 
     public function parseJsonToFieldsAndValues ( string $data = null ): array 
     {
-        $parse = array ( "fields"=> array ( ) , "values"=> array ( ) );
+        $parse = array ( "fields" => array ( ) , "values" => array ( ) );
 
         if ( !empty ( $data ) ) {
 
-            foreach ( json_decode ( $data, true ) as $field=> $value ) {
+            foreach ( json_decode ( $data, true ) as $field => $value ) {
                 if ( isset ( $parse [ "fields" ] ) ) {
                     array_push ( $parse [ "fields" ], $field );
                 };
@@ -64,8 +64,8 @@ class Modeldata
             };
         };
 
-       $parse [ "fields"] = implode ( ",", $parse [ "fields"] );
-       $parse [ "values"] = implode ( ",", $parse [ "values"] );
+       $parse [ "fields" ] = implode ( ",", $parse [ "fields" ] );
+       $parse [ "values" ] = implode ( ",", $parse [ "values" ] );
        return $parse;
     }
 
@@ -74,11 +74,11 @@ class Modeldata
         $digest = array ( );
 
         foreach ( json_decode ( $data ) as $field=> $value ) {
-            $digest = array_merge ( $digest, array ( $field=>$value ) );
+            $digest = array_merge ( $digest, array ( $field => $value ) );
         };
 
-        if ( isset ( $digest["data"] ) ) {
-            $digest["data"] = json_encode ( $digest["data"] );
+        if ( isset ( $digest [ "data" ] ) ) {
+            $digest [ "data" ] = json_encode ( $digest [ "data" ] );
         };
 
         return $digest;
