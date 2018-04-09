@@ -87,6 +87,7 @@ class Crud
         $data = ( !empty ( $ins->data [ "data" ] ) ) ? $ins->data [ "data" ] : null;
         $fields = ( !empty ( $ins->data [ "fields" ] ) ) ? $ins->data [ "fields" ] : null;
         $id = ( !empty ( $ins->data [ "id" ] ) ) ? $ins->data [ "id" ] : null;
+        $condition = ( !empty ( $ins->data [ "condition" ] ) ) ? self::$instance->model->parseJsonToItem ( json_encode ( $ins->data [ "condition" ] ) ): null;
 
         switch ( $action ) {
             case "create":
@@ -94,17 +95,20 @@ class Crud
                 $ins->response = json_encode ( $ins->create ( $table, $parse [ "fields" ], $parse [ "values" ] ) );
                 break;
             case "read":
-                $condition = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
-                $ins->response = json_encode ( $ins->read ( $table, $fields, "WHERE {$condition}" ) );
+                $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
+                $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
+                $ins->response = json_encode ( $ins->read ( $table, $fields, "WHERE {$cond}" ) );
                 break;
             case "update":
                 $data = $ins->model->parseJsonToItem ( $data );
-                $condition = ( $id == "*" || $id == "" ) ? "" : "WHERE id = {$id}";
-                $ins->response = json_encode ( $ins->update ( $table, $data, $condition ) );
+                $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
+                $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
+                $ins->response = json_encode ( $ins->update ( $table, $data, $cond ) );
                 break;
             case "delete": 
-                $condition = ( $id == "*" || $id == "" ) ? "" : "WHERE id = {$id}";
-                $ins->response = json_encode ( $ins->delete ( $table, $condition ) );
+                $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
+                $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
+                $ins->response = json_encode ( $ins->delete ( $table, $cond ) );
                 break;
             default:
                 break;

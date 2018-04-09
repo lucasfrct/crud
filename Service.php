@@ -11,9 +11,12 @@ class Service
 	private static function post ( ) {
 
 		if ( $_SERVER [ "REQUEST_METHOD"] == 'POST' ) {
-			self::$crud->digestJson ( json_encode ( $_POST ) );
+
+			//echo $_POST[ "callcommunity" ];
+
+			self::$crud->digestJson (  $_POST[ "callcommunity" ] );
 			self::$crud->run ( );
-			echo self::$crud->response ( );	
+			echo self::$crud->response ( );
 		};
 	}
 
