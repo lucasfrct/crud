@@ -10,7 +10,7 @@ class Crud
     private $connect = null;
     private $model = null;
     private $data = null;
-    private $response = null;
+    private $response = "";
     public static $message = Array ( ); #array_push (self::$message, "" );
 
     public static function on ( ): Crud 
@@ -27,7 +27,8 @@ class Crud
         return self::$instance;
     }
 
-    public function create ( string $table = null, string $fields = null, string $values = null ): bool {
+    public function create ( string $table = null, string $fields = null, string $values = null ): bool 
+    {
         if ( !empty ( $table ) && !empty ( $fields ) && !empty ( $values ) ) {
             return ( 
                 self::$instance->connect->query (  
@@ -42,15 +43,15 @@ class Crud
     {
         if ( !empty ( $table ) ) {
             $rows = array ( );
-            $condition = ( empty ( $condition ) ) ? "WHERE" : $condition." AND ";
+            $condition = ( empty ( $condition ) ) ? "WHERE" : $condition;
             
             $result = self::$instance->connect->query ( 
-                "SELECT {$fields} FROM {$table} {$condition} enable = true", 
+                "SELECT {$fields} FROM {$table} {$condition} AND enable = true", 
                 MYSQLI_USE_RESULT 
             );
 
             while ( $row = $result->fetch_assoc ( ) ) {  
-                array_push ( $rows, $row ); 
+                array_push ( $rows, self::$instance->model->parseDatabaseToArray ( $row ) ); 
             };
             
             array_push (self::$message, "Use crud read" );
@@ -73,42 +74,57 @@ class Crud
         return self::$instance->update ( $table, "enable = false", $condition );
     }
 
-    public function digestJson ( string $data = null ): array {
+    public function digestJson ( string $data = NULL ): array {
         array_push ( self::$message, "Use model digest" );
         return self::$instance->data = self::$instance->model->digest ( $data );
     }
 
-    public function run ( ): string 
+    public function run ( )
     {
 
         $ins = self::$instance;
+
         $action = $ins->data [ "action" ];
+        
         $table = $ins->data [ "table" ];
-        $data = ( !empty ( $ins->data [ "data" ] ) ) ? $ins->data [ "data" ] : null;
-        $fields = ( !empty ( $ins->data [ "fields" ] ) ) ? $ins->data [ "fields" ] : null;
-        $id = ( !empty ( $ins->data [ "id" ] ) ) ? $ins->data [ "id" ] : null;
-        $condition = ( !empty ( $ins->data [ "condition" ] ) ) ? self::$instance->model->parseJsonToItem ( json_encode ( $ins->data [ "condition" ] ) ): null;
+        
+        $fields = ( isset ( $ins->data [ "fields" ] ) ) ? $ins->data [ "fields" ] : NULL;
+        
+        $id = ( isset ( $ins->data [ "id" ] ) ) ? $ins->data [ "id" ] : NULL;
+        
+        $condition = ( isset ( $ins->data [ "condition" ] ) ) ? $ins->model->parseJsonToItem ( $ins->data [ "condition" ] ) : NULL;
+        $condition = ( NULL !== $condition ) ? implode ( " AND ", explode ( ",", $condition ) ) : $condition;
+        
+        $data = ( isset ( $ins->data [ "data" ] ) ) ? $ins->data [ "data" ] : NULL;
+        
+        #print_r ( $ins->data );
 
         switch ( $action ) {
             case "create":
                 $parse = $ins->model->parseJsonToFieldsAndValues ( $data );
-                $ins->response = json_encode ( $ins->create ( $table, $parse [ "fields" ], $parse [ "values" ] ) );
+                $ins->response = $ins->create ( $table, $parse [ "fields" ], $parse [ "values" ] );
                 break;
             case "read":
                 $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
                 $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
-                $ins->response = json_encode ( $ins->read ( $table, $fields, "WHERE {$cond}" ) );
+                $ins->response = $ins->read ( $table, $fields, "WHERE {$cond}" );
                 break;
             case "update":
                 $data = $ins->model->parseJsonToItem ( $data );
-                $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
-                $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
-                $ins->response = json_encode ( $ins->update ( $table, $data, $cond ) );
+                $cond = ( NULL !== $condition ) ? "id = {$id} AND {$condition}" : "id = {$id}";
+                if ( !empty ( $id ) || $id !== NULL ) {
+                    $ins->response = $ins->update ( $table, $data, "WHERE {$cond}" );
+                } else {
+                    $ins->response = false;
+                };
                 break;
             case "delete": 
-                $cond = ( $id == "*" || $id == "" ) ? " id > 0" :  "id = {$id}";
-                $cond = ( NULL !== $condition ) ? "{$cond} AND {$condition}" : $cond;
-                $ins->response = json_encode ( $ins->delete ( $table, $cond ) );
+                $cond = ( NULL !== $condition ) ? "id = {$id} AND {$condition}" : "id = {$id}";
+                if ( !empty ( $id ) || $id !== NULL ) {
+                    $ins->response = $ins->delete ( $table, "WHERE {$cond}" );
+                } else {
+                    $ins->response = false;
+                };
                 break;
             default:
                 break;
@@ -116,13 +132,13 @@ class Crud
 
         array_push ( self::$message, "Use Crud run" );
 
-        return self::$instance->response;
+        return $ins->response;
     }
 
     public function response ( ): string 
     { 
         array_push ( self::$message, "return Crud response" );
-        return self::$instance->response;
+        return json_encode ( self::$instance->response );
     }
 
     public static function report ( ) {
@@ -144,7 +160,7 @@ class Crud
     
     private function __clone ( ) { }
     
-    private function __wakeup ( ) { }  
+    private function __wakeup ( ) { } 
 };
 
 #$create = '{ "action": "create", "table":"crud.address", "data": { "idUser": "1", "street":"street1", "city": "city1", "country":"country1" } }';
