@@ -10,8 +10,10 @@ class Service
 
 	private static function post ( ) 
 	{
+
 		if ( $_SERVER [ "REQUEST_METHOD"] == 'POST' ) {
-			self::$crud->digestJson ( $_POST );
+			self::$crud->digestJson ( $_POST[ "callcommunity" ] );
+			#echo $_POST[ "callcommunity" ];
 			self::$crud->run ( );
 			echo self::$crud->response ( );
 		};
@@ -21,6 +23,7 @@ class Service
 	{
 		self::$crud = $crud;
 		self::post ( );
+
 	}
 }
 

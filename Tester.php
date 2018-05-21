@@ -23,7 +23,7 @@ body {
 }
 
 .container h5 {
-    margin: 0px 0 7px 0;
+    margin: 0;
     padding: 7px 0;
     font-size  1em;
 }
@@ -32,7 +32,10 @@ body {
     display: block;
     background-color: #DDD;
     padding: 7px;
+}
 
+.container small {
+    margin: 14px 0 0 0;
 }
 .container small sub {
     font-size: 0.8em;
@@ -48,68 +51,145 @@ body {
 
 class Tester 
 {
-    private static $offset = 0.000007;
-    private static $success = array ( "#0A0", "rgba(0,190,0,0.1)" );
-    private static $error = array ( "#C00", "rgba(190,0,0,0.1)" );
+    private static $instance = NULL;
 
-    private static $status = false;
-    private static $name = null;
-    private static $msg = null;
-    private static $repeat = 1;
+    private $init = 0;
+    private $tap = Array ( );
+    private $middle = 0;
+    private $total = 0;
 
-    private static $timeOfTest = 0;
-    private static $timeOfEachTest = 0;
+    private $offset = 0.000007 ;
+    private $success = array ( "#0A0", "rgba(0,190,0,0.1)" );
+    private $error = array ( "#C00", "rgba(190,0,0,0.1)" );
 
-    private static function reset ( ) 
+    private $status = FALSE;
+    private $repeat = 1;
+
+    private $unity = Array ( );
+
+    private $outResponse = [ "true", "false", "undefined" ];
+
+    private function timeInit ( ) 
     {
-        self::$status = false;
-        self::$name = null;
-        self::$msg = null;
-        self::$repeat = 1;
-        self::$timeOfTest = 0;
-        self::$timeOfEachTest = 0;
-
+        return self::$instance->init = microtime ( 1 );
     }
 
-    private static function assert ( ) 
+    private function timeTap ( ) 
     {
-        return "Tester";
+        $tap = ( microtime ( 1 ) -  self::$instance->init );
+        array_push ( self::$instance->tap, $tap );
+
+        return $tap;
     }
 
-    public static function ok ( bool $status = false, string $msg = null ): bool
+    private function timeMiddle ( ) 
     {
-        self::$msg = $msg;
-        return self::$status = $status;
+        $middle = array_reduce ( self::$instance->tap, function ( $previous, $item ) {
+            return $previous += $item;
+        } );
+
+        return self::$instance->middle = ( $middle / count ( self::$instance->tap ) );  
     }
 
-    private static function inner ( ) 
-    {    
-        $set = ( self::$status !== false ) ? self::$success : self::$error;
-        echo '<div class="container" style="border-color: '.$set [ 0 ].'">
-            <h5>'.self::$name.'</h5>
-            <small>
-                <span>'.round ( self::$timeOfEachTest, 6 ).'ms</span> 
-                <sub>(x'.self::$repeat.')</sub>
-                <em>Tempo total: '.round ( ( self::$timeOfTest / 1000 ), 2 ).'s</em>
-            </small>
-            <section style="background-color:  '.$set [ 1 ].'">'.self::$msg.'</section>
-        </div>';
-    }
-
-    private static function sum ( array $array = null ): float
-    {
-        return array_reduce ( $array, function ( $previous, $item ) {
+    private function timeTotal ( ) 
+    {   
+        self::$instance->timeTap ( );
+        return self::$instance->total =  array_reduce ( self::$instance->tap, function ( $previous, $item ) {
             return $previous += $item;
         } );
     }
 
-    public static function on ( string $name = null, Closure $fn = null, int $repeat = 1 ) 
+    private function unity ( bool $status = FALSE, string $title = "Test Undefined!", int $repeat = 1 ) 
     {
-        self::reset ( );
+        self::$instance->unity = array ( 
+            "title"=> $title, 
+            "repeat"=> $repeat,
+            "status"=> $status, 
+            "tester"=> array ( )
+        );
 
-        if ( is_string ( $name ) && $fn instanceof Closure && is_numeric ( self::$repeat ) ) {
+        /*array_push ( self::$instance->unity [ "tester" ], array ( "status"=> FALSE, "description"=> $description, "timeMiddle"=> 0, "timeTotal"=> 0, "repeat"=> 1 ) ); */ 
 
-            self::$name = $name;
+        return self::$instance->unity;
+    }
+
+    private function assert ( ) 
+    {
+        return self::$instance;
+    }
+
+    private function inner ( array $unity ) 
+    {    
+        $set = ( $unity [ "status" ] !== FALSE ) ? self::$instance->success : self::$instance->error;
+
+        echo '<div class="container" style="border-color: '.$set [ 0 ].'">
+            <h5>'.$unity [ "title" ].'</h5>
+            <small>
+                <span>'.round ( $tester [ "timeMiddle" ], 6 ).'ms</span> 
+                <sub>(x'.$tester [ "repeat" ].')</sub>
+                <em>Tempo total: '.round ( ( $tester [ "timeTotal" ] / 1000 ), 2 ).'s</em>
+            </small>';
+
+        foreach ( $unity [ "tester" ] as $tester ) {
+            echo '<section style="background-color:  '.$set [ 1 ].'">'.$tester [ "description" ].'</section>';
+        };
+
+        echo '</div>';
+    }
+
+     public static function ok ( bool $status = FALSE, string $description = NULL ): bool
+    { 
+        self::$instance->status = ( $status === TRUE && self::$instance->status === TRUE ) ? TRUE : FALSE; 
+        
+        array_push ( self::$instance->unity [ "tester" ], array ( 
+            "status"=> $status, 
+            "description"=> $description,
+            "timeTotal"=> ( self::$instance->init - self::$instance->timeTap ( ) ),
+        ) );
+
+        return $status;
+    }
+
+    public static function on ( string $title = "", Closure $fn = NULL, int $repeat = 1 ) 
+    {
+        if ( self::$instance === NULL ) {
+            self::$instance = new self;
+        };
+
+        if ( empty ( $title ) && $fn === NULL ) {
+            self::$instance->inner ( self::$instance->unity ( ) );
+        };
+
+        if ( !empty ( $title ) && is_string ( $title ) && $fn instanceof Closure && is_numeric ( $repeat ) ) {
+
+            self::$instance->timeInit ( );
+
+            self::$instance->status = TRUE;
+                
+            self::$instance->unity ( self::$instance->status,  $title, $repeat );
+            
+            for ( $i = 0; $i < $repeat; $i++ ) {
+                $fn ( self::$instance );
+                self::$instance->timeTap ( );
+            };
+
+            self::$instance->timeTotal ( );
+
+            self::$instance->inner ( self::$instance->unity );
+        };
+
+
+
+    }
+
+    public function ona ( string $title = NULL, Closure $fn = NULL, int $repeat = 1 ) 
+    {
+        
+        /*self::reset ( );
+
+        if ( is_string ( $title ) && $fn instanceof Closure && is_numeric ( self::$repeat ) ) {
+
+            self::$title = $title;
             self::$repeat = $repeat;
             
             $timeOfFunctions = array ( );
@@ -131,12 +211,11 @@ class Tester
             self::$timeOfEachTest = ( ( $timeOfEachExec + $timeOfEachFunction ) / 2 );
 
         } else {
-            self::$name = ( empty ( self::$name ) ) ? "Error!" : self::$name;
-            self::$msg = " Erro de Sintaxe. Favor verificar os argumentos de entrada do teste.";
+            self::$title = ( empty ( self::$title ) ) ? "Error!" : self::$title;
+            self::$description = " Erro de Sintaxe. Favor verificar os argumentos de entrada do teste.";
         };
 
         self::inner ( );
+        */
     }
-}
-
-#Tester::on ( "test 1", function ( $assert ) { $assert::ok ( true, "msg" ); }, 1000 );
+};
