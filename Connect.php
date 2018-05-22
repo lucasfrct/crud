@@ -39,10 +39,12 @@ class Connect
 	# Abre connecxão Mysqli
 	private function open ( ) 
 	{
-
 		try {
-			 $Mysqli = @new \Mysqli (
-				self::$instance->host [ "host" ].":".self::$instance->host [ "port" ], 
+			
+			$port = ( !empty ( self::$instance->host [ "port" ] ) ) ? ":".self::$instance->host [ "port" ] : "";
+			
+			$Mysqli = @new \Mysqli (
+				self::$instance->host [ "host" ].$port, 
 				self::$instance->host [ "user" ], 
 				self::$instance->host [ "password" ], 
 				self::$instance->database 
@@ -65,7 +67,7 @@ class Connect
 	}
 
 	# inicia uma instancia da classe ConnectMysqli
-	public static function on ( )
+	public static function on ( string $host = "", string $user = "", string $password = "" )
 	{
 		#inicia uma instância se necessário
 		if ( null === self::$instance ) { 
@@ -75,7 +77,7 @@ class Connect
 
 		$inst = self::$instance;
 
-		if ( null !== $inst && $inst->onServer ( $inst->host [ "host" ], $inst->host [ "port" ] ) ) {;
+		if ( null !== $inst && $inst->onServer ( $host ) ) {;
 			$inst->open ( );
 		};
 		
