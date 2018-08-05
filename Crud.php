@@ -4,9 +4,9 @@
 include_once ( "autoload.php" );
 
 use Connect as CrudConnect;
-use Modeldata as CrudMedeldata;
+use ICrud as interfaceCrud;
 
-class Crud
+class Crud implements interfaceCrud
 {
     private static $instance = null;
     private static $debug = Array ( );
@@ -26,8 +26,8 @@ class Crud
         return json_encode ( self::$debug );
     }
 
-    # inicia um instância da calsse Crud e injeta a injeção Connect com um objeto MySqli 
-    public static function on ( MySqli $connect ): Crud 
+    # inicia um instância da classe Crud e injeta a injeção Connect com um objeto MySqli 
+    public static function on ( MySqli $connect = null ): Crud 
     {
         if ( null === self::$instance ) { 
 
@@ -120,13 +120,13 @@ class Crud
     private function __wakeup ( ) { } 
 };
 
-$conn = CrudConnect::on ( "127.0.0.1:3306", "root", "", "test" );
+#$conn = CrudConnect::on ( "127.0.0.1:3306", "root", "", "test" );
 #echo Connect::debug ( );
 
-$crud = Crud::on ( $conn );
+#$crud = Crud::on ( $conn );
 #$crud->create ( "test", "user, password", "'lucas','password'" );
 #$crud->read ( "test", 'user = "lucas"' );
 #$crud->update ( "test", "password = 'lucas' WHERE id > 7" );
 #$crud->delete ( "test", "id = 11" );
-$crud->off ( );
-echo $crud->debug ( );
+#$crud->off ( );
+#echo $crud->debug ( );
