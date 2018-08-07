@@ -42,17 +42,21 @@ Tester::on ( "Modeldata", function ( $assert ) {
     
     $assert::ok ( $model !== NULL, "Testa se a classe Modeldata foi iniciada: model = new Modeldata ( Crud::on ( Connect::on ( \"127.0.0.1:3306\", \"root\", \"\", \"test\" ) ) )" );
     
+    #CREATE
     $assert::ok ( $model->digest ( '{ "action": "create", "table": "test", "data": { "user": "modeldata", "password": "model1234", 
     "parent": [ { "name": "p" }, { "name": "pp" }, { "name": "ppp" } ] 
 } }' ), "(CREATE) - Testa se a Classe Modeldata está inserindo dados: model->digest ( '{ \"action\": \"create\", \"table\": \"test\", \"data\": { \"user\": \"modeldata\", \"password\": \"model1234\", 
     \"parent\": [ { \"name\": \"p\" }, { \"name\": \"pp\" }, { \"name\": \"ppp\" } ] 
 } }' )" );
 
+    #READ
     $read = $model->digest ( '{ "action": "read", "table": "test", "fields": "id, user, parent", "query": "id >= 1" }' );
     $assert::ok ( strlen ( $read ) > 4, "(READ) - Testa se a Classe Modeldata está consultando dados:  model->digest ( '{ \"action\": \"read\", \"table\": \"test\", \"fields\": \"id, user, parent\", \"query\": \"id >= 1\" }' ); || = {$read} " );
 
-    $assert::ok ( $model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 0" }' ), "(UPDATE) - Testa se a Classe Modedata esta atualizando os dados: model->digest ( '{ \"action\": \"update\", \"table\": \"test\", \"fields\": \"password = 'model update'\", \"query\": \"id >= 0\" }' );" );
+    #UPDATE
+    $assert::ok ( $model->digest ( '{ "action": "update", "table": "test", "data": { "password" : "model update" }, "query": "id >= 0" }' ), "(UPDATE) - Testa se a Classe Modedata esta atualizando os dados: model->digest ( '{ \"action\": \"update\", \"table\": \"test\", \"data\": { \"password\": \"model update\" }, \"query\": \"id >= 0\" }' );" );
 
+    #DELETE
     $assert::ok ( $model->digest ( '{ "action": "delete", "table": "test", "query": "id >= 0" }' ), "(DELETE) - Testa se a Classe Modeldata está deletando dados: model->digest ( '{ \"action\": \"delete\", \"table\": \"test\", \"query\": \"id >= 0\" }' );" );
 
     $assert::ok ( count ( $model->debug ( ) ) > 0, "Testa se a Classe Modeldata foi debugada: ".$model->debug ( ) );

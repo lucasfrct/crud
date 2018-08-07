@@ -19,7 +19,7 @@ class Service
 	public static function requestPost (  ) 
 	{
 		if ( $_SERVER [ "REQUEST_METHOD"] == 'POST' ) {
-			return json_encode ( self::$modeldata->digest ( $_POST ) );
+			echo json_encode ( self::$modeldata->digest ( json_encode ( $_POST ) ) );
 		};
 	}
 };

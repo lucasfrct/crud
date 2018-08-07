@@ -71,6 +71,19 @@ class Modeldata
        return $parse;
     }
 
+    # transforma uma arrya para estrutura de campo = 'valor'
+    private function parseJsonToFields ( array $data = null ): string
+    {   
+        $values = array ( );
+
+        foreach ( $data as $field => $value ) {
+            $value = $this->arraySerialize ( $this->parseBool ( $value ) );
+            array_push ( $values, "{$field} = '{$value}'" );
+        };
+
+        return implode ( ",", $values );
+    } 
+
     # detecta se o dados éw uma array e serializa para uma string
     private function arraySerialize ( $data = "" )
     {
@@ -162,7 +175,7 @@ class Modeldata
     private function update ( ): bool
     {
         $this->addDebug ( "Action: method Update" );
-        return $this->crud->update ( $this->table, $this->fields, $this->query );
+        return $this->crud->update ( $this->table, $this->parseJsonToFields ( $this->data ), $this->query );
     }
 
     # envia dados no formato Delete para o crud
@@ -212,6 +225,6 @@ class Modeldata
 #} }' );
 #$read = $model->digest ( '{ "action": "read", "table": "test", "fields": "id, user, parent", "query": "id >= 0" }' );
 #echo json_encode ( $read ); // var_dump ( $model->read ( ) );
-#$model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 0" }' );
+#$model->digest ( '{ "action": "update", "table": "test", "data":{ "password": "modelUpdate" }, "query": "id >= 0" }' );
 #$model->digest ( '{ "action": "delete", "table": "test", "query": "id > 0" }' );
 #echo $model->debug ( );
