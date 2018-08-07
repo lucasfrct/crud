@@ -210,8 +210,8 @@ class Modeldata
 #$model->digest ( '{ "action": "create", "table": "test", "data": { "user": "modeldata", "password": "model1234", 
 #    "parent": [ { "name": "p" }, { "name": "pp" }, { "name": "ppp" } ] 
 #} }' );
-#$read = $model->digest ( '{ "action": "read", "table": "test", "fields": "id, user, parent", "query": "id >= 1" }' );
+#$read = $model->digest ( '{ "action": "read", "table": "test", "fields": "id, user, parent", "query": "id >= 0" }' );
 #echo json_encode ( $read ); // var_dump ( $model->read ( ) );
-#$model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 2" }' );
-#$model->digest ( '{ "action": "delete", "table": "test", "query": "id > 3" }' );
+#$model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 0" }' );
+#$model->digest ( '{ "action": "delete", "table": "test", "query": "id > 0" }' );
 #echo $model->debug ( );

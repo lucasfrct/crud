@@ -28,9 +28,9 @@ Tester::on ( 'Crud', function ( $assert ) {
     
     $assert::ok ( count ( $crud->read ( "test", "user", 'user = "admin"' ) ) > 0, '(READ) - Testa se Crud faz consulta e retorna uma array: $crud->read ( "test", "user", \'user = "admin"\' )' );
     
-    $assert::ok ( $crud->update ( "test", "password = 'adminPass'", "id >= 1" ), '(UPDATE) - Testa se o Crud está atualizando dados: $crud->update ( "test", "password = \'adminPass\'", "id >= 1" );' );
+    $assert::ok ( $crud->update ( "test", "password = 'adminPass'", "id >= 0" ), '(UPDATE) - Testa se o Crud está atualizando dados: $crud->update ( "test", "password = \'adminPass\'", "id >= 0" );' );
     
-    $assert::ok ( $crud->delete ( "test", "id >= 7" ), '(DELETE) - Testa se o Crud está deletando daddos: crud->delete ( "test", "id >= 7" );' );
+    $assert::ok ( $crud->delete ( "test", "id >= 0" ), '(DELETE) - Testa se o Crud está deletando daddos: crud->delete ( "test", "id >= 0" );' );
     
     $assert::ok ( count ( $crud->debug ( ) ) > 0, "Testa se a classe Crud foi debugada: ".$crud->debug ( ) );
     
@@ -51,9 +51,9 @@ Tester::on ( "Modeldata", function ( $assert ) {
     $read = $model->digest ( '{ "action": "read", "table": "test", "fields": "id, user, parent", "query": "id >= 1" }' );
     $assert::ok ( strlen ( $read ) > 4, "(READ) - Testa se a Classe Modeldata está consultando dados:  model->digest ( '{ \"action\": \"read\", \"table\": \"test\", \"fields\": \"id, user, parent\", \"query\": \"id >= 1\" }' ); || = {$read} " );
 
-    $assert::ok ( $model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 2" }' ), "(UPDATE) - Testa se a Classe Modedata esta atualizando os dados: model->digest ( '{ \"action\": \"update\", \"table\": \"test\", \"fields\": \"password = 'model update'\", \"query\": \"id >= 2\" }' );" );
+    $assert::ok ( $model->digest ( '{ "action": "update", "table": "test", "fields": "password = \'model update\'", "query": "id >= 0" }' ), "(UPDATE) - Testa se a Classe Modedata esta atualizando os dados: model->digest ( '{ \"action\": \"update\", \"table\": \"test\", \"fields\": \"password = 'model update'\", \"query\": \"id >= 0\" }' );" );
 
-    $assert::ok ( $model->digest ( '{ "action": "delete", "table": "test", "query": "id > 3" }' ), "(DELETE) - Testa se a Classe Modeldata está deletando dados: model->digest ( '{ \"action\": \"delete\", \"table\": \"test\", \"query\": \"id > 3\" }' );" );
+    $assert::ok ( $model->digest ( '{ "action": "delete", "table": "test", "query": "id >= 0" }' ), "(DELETE) - Testa se a Classe Modeldata está deletando dados: model->digest ( '{ \"action\": \"delete\", \"table\": \"test\", \"query\": \"id >= 0\" }' );" );
 
     $assert::ok ( count ( $model->debug ( ) ) > 0, "Testa se a Classe Modeldata foi debugada: ".$model->debug ( ) );
 
