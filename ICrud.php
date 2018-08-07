@@ -7,9 +7,9 @@ interface ICrud
 
     public function create ( string $table, string $fields, string $values ): bool;
 
-    public function read ( string $table, string $query ): array; 
+    public function read ( string $table, string $fields, string $query ): array; 
 
-    public function  update ( string $table, string $query  ): bool ;
+    public function update ( string $table, string $fields, string $query  ): bool ;
 
     public function delete ( string $table, string $query ): bool;
 }

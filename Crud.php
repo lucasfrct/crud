@@ -59,13 +59,13 @@ class Crud implements interfaceCrud
         };
     } 
 
-    public function read ( string $table = "", string $query = "" ): array 
+    public function read ( string $table = "", string $fields = "*", string $query = "" ): array 
     {
         $rows = array ( );
         
         if ( !empty ( $table )  && !empty ( $query ) ) {
             
-            $sql = "SELECT * FROM {$table} WHERE {$query}";
+            $sql = "SELECT {$fields} FROM {$table} WHERE {$query}";
 
             $result = self::$instance->query ( $sql , MYSQLI_USE_RESULT );
 
@@ -79,13 +79,13 @@ class Crud implements interfaceCrud
         return $rows;
     }
 
-    public function update ( string $table = "", string $query = "" ): bool 
+    public function update ( string $table = "", string $fields = "", string $query = "" ): bool 
     {
         $update = false;
 
         if ( !empty ( $table ) && !empty ( $query ) ) {
             self::addDebug ( "Action MySqli Update" );
-            $update = ( self::$instance->query ( "UPDATE {$table} SET {$query}" ) && self::$instance->connect->affected_rows > 0 ) ? true : false;
+            $update = ( self::$instance->query ( "UPDATE {$table} SET {$fields} WHERE {$query}" ) && self::$instance->connect->affected_rows > 0 ) ? true : false;
         };
 
         return $update;
@@ -120,13 +120,14 @@ class Crud implements interfaceCrud
     private function __wakeup ( ) { } 
 };
 
+# Teste de métodos públicos
 #$conn = CrudConnect::on ( "127.0.0.1:3306", "root", "", "test" );
 #echo Connect::debug ( );
 
 #$crud = Crud::on ( $conn );
-#$crud->create ( "test", "user, password", "'lucas','password'" );
-#$crud->read ( "test", 'user = "lucas"' );
-#$crud->update ( "test", "password = 'lucas' WHERE id > 7" );
-#$crud->delete ( "test", "id = 11" );
-#$crud->off ( );
+#$crud->create ( "test", "user, password", "'admin','admin'" );
+#echo json_encode ( $crud->read ( "test", "user", 'user = "admin"' ) );
+#$crud->update ( "test", "password = 'adminPass'", "id >= 1" );
+#$crud->delete ( "test", "id >= 7" );
 #echo $crud->debug ( );
+#$crud->off ( );

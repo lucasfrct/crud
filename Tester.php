@@ -15,23 +15,26 @@ body {
 }
 .container { 
     border: solid 1px #9E9E9E;
+    border-left-width: 7px;
     display block; margin: 1px 0; 
-    padding: 7px 14px; 
+    padding: 7px 14px 14px 14px; 
     min-height: 60px; 
     background-color: #EEEEEE;
     font-size: 14px;
+    margin-bottom: 7px;
 }
 
 .container h5 {
     margin: 0;
-    padding: 7px 0;
-    font-size  1em;
+    padding: 3px 0;
+    font-size: 1.2em;
 }
 
 .container h5 > small {
     float: right;
     position: relative;
     right: 0;
+    font-size: 0.65em;
 }
 
 .container > small, .container > section {
@@ -39,6 +42,7 @@ body {
     display: block;
     background-color: #DDD;
     padding: 7px;
+    border-left: solid 3px transparent;
 }
 
 .container > small {
@@ -59,8 +63,8 @@ body {
 class Tester 
 {
     private static $instance = NULL;
-    private $success = array ( "#0A0", "rgba(0,190,0,0.1)" );
-    private $error = array ( "#C00", "rgba(190,0,0,0.1)" );
+    private $success = array ( "#0A0", "rgba(0,190,0,0.2)" );
+    private $error = array ( "#C00", "rgba(190,0,0,0.2)" );
     
     private $unity = Array ( 
         "status"=> FALSE,
@@ -116,11 +120,11 @@ class Tester
         
         foreach ( $unity [ "tester" ] as $tester ) {
             $status = ( $tester [ "status" ] !== FALSE ) ? self::$instance->success : self::$instance->error;
-        echo '<small>
+        echo '<small style="border-color: '.$status [ 1 ].'">
                 <span>Tempo Médio: '.round ( ( $tester [ "timeTotal" ] * 1000 ), 2 ).' ms</span> 
                 <em></em>
             </small>
-            <section style="background-color:  '.$status [ 1 ].'">'.$tester [ "description" ].'</section>';
+            <section style="background-color: '.$status [ 1 ].'; border-color: '.$status [ 1 ].'">'.$tester [ "description" ].'</section>';
         };
 
         echo '</div>';

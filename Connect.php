@@ -118,6 +118,7 @@ class Connect
 	private function __wakeup ( ) { }
 };
 
+#teste de métodos públicos
 #Connect::on ( "127.0.0.1:3306", "root", "", "mysql" );
 #echo Connect::off ( );
 #echo Connect::debug ( );
