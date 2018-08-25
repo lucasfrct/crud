@@ -122,10 +122,10 @@ class Modeldata
     }
 
     # passar um string JSON para array e carrega as variáveis para determinar a ação da crud
-    public function digest ( string $json ) 
+    public function digest ( $json ) 
     {   
         $this->addDebug ( "Action: digest" );
-        $data = json_decode ( $json, true );
+        $data = ( is_array ( $json ) ) ? $json : json_decode ( $json, true );
 
         if ( isset ( $data [ "action" ] ) ) {
             $this->action = $data [ "action" ];
