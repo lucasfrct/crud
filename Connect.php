@@ -4,7 +4,7 @@
 class Connect 
 {
 
-	# Instância única 
+	# Singleton Instance
 	private static $instance = null;
 	public static $debug = Array ( );
 	private $mysqli = null;
